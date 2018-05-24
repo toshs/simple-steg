@@ -14,15 +14,20 @@ class StegMoire:
 
     def open(self, filename):
         self.image = Image.open(filename)
+        self.image = self.image.convert('RGB')
         self.image_array = np.array(self.image) / 255.0
 
     def low_contrast(self):
         self.image_array = self.image_array / 255.0 / 8.0 + 0.125
 
     def phi_1(self):
-        return np.array([[[self.parameter * pi * x for c in range(3)] for x in range(self.image.width)] for y in range(self.image.height)])
-        #return np.array([[[self.parameter * pi * x + np.cos(y) for c in range(3)] for x in range(self.image.width)] for y in range(self.image.height)])
         # parameter should be from 0.0 to 1.0
+        return np.array([[[self.parameter * pi * x + np.cos(y) for c in range(3)] for x in range(self.image.width)] for y in range(self.image.height)])
+
+        # return np.array([[[self.parameter * pi * (x+y) for c in range(3)] for x in range(self.image.width)] for y in range(self.image.height)])
+        # return self.profile_inv(np.array(Image.open("example.png").convert('RGB'))/255.0)
+        # return np.array([[[self.parameter * pi * x + np.cos(y) for c in range(3)] for x in range(self.image.width)] for y in range(self.image.height)])
+
 
     def phi_2(self):
         return self.phi_1() - self.profile_inv(self.image_array)
